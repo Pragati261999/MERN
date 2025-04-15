@@ -1,0 +1,6 @@
+# Ignore node_modules and environment files
+node_modules/
+.env
+.DS_Store
+logs
+*.log
