@@ -13,12 +13,19 @@ const quizRoutes = require("./routes/quiz.routes");
 // Initialize express app
 const app = express();
 
+// CORS configuration
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
-app.use("/api/users", userRoutes);
+app.use("/api/auth", userRoutes);
 app.use("/api/quizzes", quizRoutes);
 
 // Error handling middleware
