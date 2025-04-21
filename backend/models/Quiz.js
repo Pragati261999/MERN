@@ -20,20 +20,53 @@ const quizSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  description: String,
+  description: {
+    type: String,
+    required: true
+  },
   teacher: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  questions: [questionSchema],
+  questions: [
+    {
+      text: {
+        type: String,
+        required: true
+      },
+      options: [
+        {
+          text: {
+            type: String,
+            required: true
+          },
+          isCorrect: {
+            type: Boolean,
+            default: false
+          },
+        }
+      ],
+      correctOption: {
+        type: Number,
+        required: true
+      },
+    }
+  ],
   timeLimit: {
-    type: Number, // in minutes
-    default: 30
+    type: Number,
+    required: true,
+    min: 1,
+    max: 120
   },
   passingScore: {
     type: Number,
     default: 60
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   isPublished: {
     type: Boolean,
