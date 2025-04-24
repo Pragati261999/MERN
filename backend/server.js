@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const authRoutes = require('./routes/authRoutes');
-const quizRoutes = require('./routes/quizRoutes');
+const userRoutes = require('./routes/user.routes');
+const quizRoutes = require('./routes/quiz.routes');
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +13,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3002'],
+  origin: ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:3003'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -23,7 +23,7 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", userRoutes);
 app.use("/api/quizzes", quizRoutes);
 
 // Error handling middleware
