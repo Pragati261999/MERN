@@ -1,20 +1,5 @@
 const mongoose = require('mongoose');
 
-const questionSchema = new mongoose.Schema({
-  questionText: {
-    type: String,
-    required: true
-  },
-  options: [{
-    text: String,
-    isCorrect: Boolean
-  }],
-  points: {
-    type: Number,
-    default: 1
-  }
-});
-
 const quizSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -24,68 +9,52 @@ const quizSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  teacher: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  questions: [
-    {
-      text: {
-        type: String,
-        required: true
-      },
-      options: [
-        {
-          text: {
-            type: String,
-            required: true
-          },
-          isCorrect: {
-            type: Boolean,
-            default: false
-          },
-        }
-      ],
-      correctOption: {
-        type: Number,
-        required: true
-      },
-    }
-  ],
-  timeLimit: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 120
-  },
-  passingScore: {
-    type: Number,
-    default: 60
-  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
+  timeLimit: {
+    type: Number,
+    required: true,
+    default: 30
+  },
   isPublished: {
     type: Boolean,
     default: false
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-// Update the updatedAt field before saving
-quizSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
+  questions: [{
+    text: {
+      type: String,
+      required: true
+    },
+    options: {
+      type: [String],
+      required: true,
+      validate: {
+        validator: function(v) {
+          return v.length >= 2 && v.every(option => option.trim().length > 0);
+        },
+        message: 'Each question must have at least 2 non-empty options'
+      }
+    },
+    correctOption: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function(v) {
+          return v >= 0 && v < this.options.length;
+        },
+        message: 'Correct option must be a valid index in the options array'
+      }
+    }
+  }],
+  assignedTo: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('Quiz', quizSchema); 
