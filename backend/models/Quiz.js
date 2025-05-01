@@ -23,17 +23,46 @@ const quizSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // questions: [{
+  //   text: {
+  //     type: String,
+  //     required: true
+  //   },
+  //   options: {
+  //     type: [String],
+  //     required: true,
+  //     validate: {
+  //       validator: function(v) {
+  //         return v.length >= 2 && v.every(option => option.trim().length > 0);
+  //       },
+  //       message: 'Each question must have at least 2 non-empty options'
+  //     }
+  //   },
+  //   correctOption: {
+  //     type: Number,
+  //     required: true,
+  //     validate: {
+  //       validator: function(v) {
+  //         return v >= 0 && v < this.options.length;
+  //       },
+  //       message: 'Correct option must be a valid index in the options array'
+  //     }
+  //   }
+  // }],
   questions: [{
     text: {
       type: String,
       required: true
     },
     options: {
-      type: [String],
+      type: [{
+        text: { type: String, required: true },
+        isCorrect: { type: Boolean, required: true }
+      }],
       required: true,
       validate: {
-        validator: function(v) {
-          return v.length >= 2 && v.every(option => option.trim().length > 0);
+        validator: function (v) {
+          return v.length >= 2 && v.every(option => option.text.trim().length > 0);
         },
         message: 'Each question must have at least 2 non-empty options'
       }
@@ -42,13 +71,14 @@ const quizSchema = new mongoose.Schema({
       type: Number,
       required: true,
       validate: {
-        validator: function(v) {
+        validator: function (v) {
           return v >= 0 && v < this.options.length;
         },
         message: 'Correct option must be a valid index in the options array'
       }
     }
   }],
+  
   assignedTo: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
