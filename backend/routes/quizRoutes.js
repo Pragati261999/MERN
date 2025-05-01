@@ -61,7 +61,8 @@ router.get('/:id', auth, async (req, res) => {
 
 // Create a new quiz
 router.post('/', auth, async (req, res) => {
-  try {
+  // try {
+    console.log("Request body:", req.body);
     // Only teachers and admins can create quizzes
     if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Access denied' });
@@ -74,9 +75,9 @@ router.post('/', auth, async (req, res) => {
 
     const newQuiz = await quiz.save();
     res.status(201).json(newQuiz);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+  // } catch (error) {
+  //   res.status(400).json({ message: error.message });
+  // }
 });
 
 // Update a quiz
