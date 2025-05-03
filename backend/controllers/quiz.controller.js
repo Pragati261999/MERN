@@ -3,16 +3,17 @@ const Result = require("../models/Result");
 
 // Create a new quiz (teacher only)
 exports.createQuiz = async (req, res) => {
-  try {
+  // try {
+    console.log("Request body:", req.body);
     const quiz = new Quiz({
       ...req.body,
       teacher: req.user._id
     });
     await quiz.save();
     res.status(201).json(quiz);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  // } catch (error) {
+  //   res.status(500).json({ error: error.message });
+  // }
 };
 
 // Get all quizzes (with role-based filtering)
@@ -43,10 +44,13 @@ exports.getQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id)
       .populate('teacher', 'username email');
+    console.log("Quiz:", quiz);
 
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
+
+    console.log("req.user.role:", req.user.role);
 
     // Students can only access published quizzes
     if (req.user.role === 'student' && !quiz.isPublished) {
