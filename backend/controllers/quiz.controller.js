@@ -44,7 +44,6 @@ exports.getQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id)
       .populate('teacher', 'username email');
-    console.log("Quiz:", quiz);
 
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
