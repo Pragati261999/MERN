@@ -3,7 +3,7 @@ const Result = require("../models/Result");
 
 // Create a new quiz (teacher only)
 exports.createQuiz = async (req, res) => {
-  // try {
+  try {
     console.log("Request body:", req.body);
     const quiz = new Quiz({
       ...req.body,
@@ -11,9 +11,9 @@ exports.createQuiz = async (req, res) => {
     });
     await quiz.save();
     res.status(201).json(quiz);
-  // } catch (error) {
-  //   res.status(500).json({ error: error.message });
-  // }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 // Get all quizzes (with role-based filtering)
