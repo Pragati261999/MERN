@@ -4,7 +4,6 @@ const Result = require("../models/Result");
 // Create a new quiz (teacher only)
 exports.createQuiz = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
     const quiz = new Quiz({
       ...req.body,
       createdBy: req.user._id
