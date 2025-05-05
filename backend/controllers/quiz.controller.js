@@ -7,7 +7,7 @@ exports.createQuiz = async (req, res) => {
     console.log("Request body:", req.body);
     const quiz = new Quiz({
       ...req.body,
-      teacher: req.user._id
+      createdBy: req.user._id
     });
     await quiz.save();
     res.status(201).json(quiz);

@@ -23,32 +23,7 @@ const quizSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  // questions: [{
-  //   text: {
-  //     type: String,
-  //     required: true
-  //   },
-  //   options: {
-  //     type: [String],
-  //     required: true,
-  //     validate: {
-  //       validator: function(v) {
-  //         return v.length >= 2 && v.every(option => option.trim().length > 0);
-  //       },
-  //       message: 'Each question must have at least 2 non-empty options'
-  //     }
-  //   },
-  //   correctOption: {
-  //     type: Number,
-  //     required: true,
-  //     validate: {
-  //       validator: function(v) {
-  //         return v >= 0 && v < this.options.length;
-  //       },
-  //       message: 'Correct option must be a valid index in the options array'
-  //     }
-  //   }
-  // }],
+  
   questions: [{
     text: {
       type: String,
