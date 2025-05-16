@@ -24,17 +24,17 @@ exports.getQuizzes = async (req, res) => {
   try {
     let query = {};
     
-    // Teachers can only see their own quizzes
-    if (req.user.role === 'teacher') {
-      query.teacher = req.user._id;
-    }
-    // Students can only see published quizzes
-    else if (req.user.role === 'student') {
-      query.isPublished = true;
-    }
+    // // Teachers can only see their own quizzes
+    // if (req.user.role === 'teacher') {
+    //   query.teacher = req.user._id;
+    // }
+    // // Students can only see published quizzes
+    // else if (req.user.role === 'student') {
+    //   query.isPublished = true;
+    // }
 
     const quizzes = await Quiz.find(query)
-      .populate('teacher', 'username email')
+      // .populate('teacher', 'username email')
       .sort({ createdAt: -1 });
     res.json(quizzes);
   } catch (error) {
