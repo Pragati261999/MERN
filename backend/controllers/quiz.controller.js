@@ -38,17 +38,17 @@ exports.getQuizzes = async (req, res) => {
   }
 };
 
-// Get a single quiz
 exports.getQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id)
       .populate('teacher', 'username email');
 
+      console.log("quizzz::  ",quiz);
+
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
     }
 
-    console.log("req.user.role:", req.user.role);
 
     // Students can only access published quizzes
     if (req.user.role === 'student' && !quiz.isPublished) {
