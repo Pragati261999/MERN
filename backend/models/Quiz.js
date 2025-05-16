@@ -3,16 +3,19 @@ const mongoose = require('mongoose');
 const quizSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    maxlength:6,
+    
   },
   description: {
     type: String,
-    required: true
+   
+    minlength:6,
+
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    
   },
   timeLimit: {
     type: Number,

@@ -8,6 +8,10 @@ exports.createQuiz = async (req, res) => {
       ...req.body,
       createdBy: req.user._id
     });
+    const validationError = quiz.validateSync();
+    if (validationError) {
+      return res.status(400).json({ error: validationError.message });
+    }
     await quiz.save();
     res.status(201).json(quiz);
   } catch (error) {
