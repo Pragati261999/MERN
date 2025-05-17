@@ -4,11 +4,11 @@ const quizSchema = new mongoose.Schema({
   title: {
     type: String,
     maxlength:6,
+    required:true
     
   },
   description: {
     type: String,
-   
     minlength:6,
 
   },
