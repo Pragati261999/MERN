@@ -102,9 +102,9 @@ const CreateQuiz = () => {
 
   const handleSubmit = async (e) => {
     // e.preventDefault();
-    // try {
-    //   setLoading(true);
-    //   setError(null);
+    try {
+      setLoading(true);
+      setError(null);
       
       console.log("User:", user);
       
@@ -166,12 +166,12 @@ const CreateQuiz = () => {
       const response = await quizAPI.createQuiz(quizData);
       dispatch(addQuiz(response.data));
       navigate('/quizzes');
-    // } catch (err) {
-    //   console.error('Error creating quiz:', err);
-    //   setError(err.response?.data?.message || err.message || 'Failed to create quiz');
-    // } finally {
-    //   setLoading(false);
-    // }
+    } catch (err) {
+      console.error('Error creating quiz:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to create quiz');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
