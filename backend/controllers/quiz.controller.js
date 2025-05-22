@@ -45,7 +45,7 @@ exports.getQuizzes = async (req, res) => {
 exports.getQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id)
-      .populate('teacher', 'username email');
+      .populate('createdBy', 'username email');
 
       console.log("quizzz::  ",quiz);
 
