@@ -101,7 +101,7 @@ const CreateQuiz = () => {
   };
 
   const handleSubmit = async (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     try {
       setLoading(true);
       setError(null);
@@ -110,12 +110,11 @@ const CreateQuiz = () => {
       
       // Validate all fields are filled
       const hasEmptyFields = quiz.questions.some(question => 
-        !question.text.trim() || 
-        question.options.some(option => 
-          (typeof option === 'string' && !option.trim()) || 
-          (typeof option === 'object' && !option.text?.trim())
-        ) ||
-        question.correctOption === undefined
+        !question.text.trim() ||
+      question.options.some(option => (typeof option === 'string' && !option.trim()) ||
+        (typeof option === 'object' && !option.text?.trim())
+      ) ||
+      question.correctOption === undefined
       );
 
       if (hasEmptyFields) {
