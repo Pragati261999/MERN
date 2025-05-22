@@ -45,9 +45,11 @@ exports.getQuizzes = async (req, res) => {
 exports.getQuiz = async (req, res) => {
   try {
     const quiz = await Quiz.findById(req.params.id)
-      .populate('createdBy', 'username email');
+      .populate('createdBy');
 
       console.log("quizzz::  ",quiz);
+      console.log("sdjfkdsfhs::  ",req.user.role);
+
 
     if (!quiz) {
       return res.status(404).json({ error: 'Quiz not found' });
@@ -60,7 +62,7 @@ exports.getQuiz = async (req, res) => {
     }
 
     // Teachers can only access their own quizzes
-    if (req.user.role === 'teacher' && quiz.teacher.toString() !== req.user._id.toString()) {
+    if (req.user.role === 'teacher' && quiz.createdBy.role !== req.user._id) {
       return res.status(403).json({ error: 'Access denied' });
     }
 
