@@ -124,10 +124,7 @@ const CreateQuiz = () => {
       if (!user || !user._id) {
         throw new Error('User information is missing. Please log in again.');
       }
-
-      // Format the questions based on the updated model schema
       const formattedQuestions = quiz.questions.map(question => {
-        // Convert simple string options to objects with text and isCorrect properties
         const formattedOptions = question.options.map((option, index) => {
           if (typeof option === 'string') {
             return {
