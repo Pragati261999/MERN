@@ -1,68 +1,123 @@
 const mongoose = require('mongoose');
 
+const questionSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['mcq', 'true_false', 'short_answer', 'essay', 'image_based'],
+    required: true
+  },
+  question: {
+    type: String,
+    required: true
+  },
+  options: [{
+    text: String,
+    isCorrect: Boolean
+  }],
+  correctAnswer: String,
+  explanation: String,
+  points: {
+    type: Number,
+    default: 1
+  },
+  imageUrl: String,
+  difficulty: {
+    type: String,
+    enum: ['easy', 'medium', 'hard'],
+    default: 'medium'
+  }
+});
+
 const quizSchema = new mongoose.Schema({
   title: {
     type: String,
-    maxlength:6,
-    required:true
-    
+    required: true,
+    trim: true
   },
   description: {
     type: String,
-    minlength:6,
-
+    required: true
   },
-  createdBy: {
+  creator: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    
+    required: true
   },
-  timeLimit: {
-    type: Number,
-    required: true,
-    default: 30
-  },
-  isPublished: {
-    type: Boolean,
-    default: false
-  },
-  
-  questions: [{
-    text: {
-      type: String,
-      required: true
+  questions: [questionSchema],
+  settings: {
+    timeLimit: {
+      type: Number, // in minutes
+      default: 30
     },
-    options: {
-      type: [{
-        text: { type: String, required: true },
-        isCorrect: { type: Boolean, required: true }
-      }],
-      required: true,
-      validate: {
-        validator: function (v) {
-          return v.length >= 2 && v.every(option => option.text.trim().length > 0);
-        },
-        message: 'Each question must have at least 2 non-empty options'
-      }
+    randomizeQuestions: {
+      type: Boolean,
+      default: false
     },
-    correctOption: {
+    randomizeOptions: {
+      type: Boolean,
+      default: false
+    },
+    showResults: {
+      type: Boolean,
+      default: true
+    },
+    passingScore: {
       type: Number,
-      required: true,
-      validate: {
-        validator: function (v) {
-          return v >= 0 && v < this.options.length;
-        },
-        message: 'Correct option must be a valid index in the options array'
-      }
+      default: 60
+    },
+    attemptsAllowed: {
+      type: Number,
+      default: 1
     }
-  }],
-  
-  assignedTo: [{
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  tags: [String],
+  status: {
+    type: String,
+    enum: ['draft', 'published', 'archived'],
+    default: 'draft'
+  },
+  collaborators: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  analytics: {
+    totalAttempts: {
+      type: Number,
+      default: 0
+    },
+    averageScore: {
+      type: Number,
+      default: 0
+    },
+    difficultyRating: {
+      type: Number,
+      default: 0
+    }
+  }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model('Quiz', quizSchema); 
+// Index for better search performance
+quizSchema.index({ title: 'text', description: 'text', category: 'text', tags: 'text' });
+
+// Method to calculate quiz statistics
+quizSchema.methods.calculateStats = async function() {
+  const QuizAttempt = mongoose.model('QuizAttempt');
+  const attempts = await QuizAttempt.find({ quiz: this._id });
+  
+  this.analytics.totalAttempts = attempts.length;
+  this.analytics.averageScore = attempts.length > 0 
+    ? attempts.reduce((acc, attempt) => acc + attempt.score, 0) / attempts.length 
+    : 0;
+  
+  await this.save();
+};
+
+const Quiz = mongoose.model('Quiz', quizSchema);
+
+module.exports = Quiz; 
