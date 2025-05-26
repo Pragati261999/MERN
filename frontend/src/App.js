@@ -1,84 +1,65 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { useSelector } from 'react-redux';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import theme from './theme';
 
 // Layout Components
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/auth/PrivateRoute';
 
-// Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+// Auth Components
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 
-// Quiz Pages
-import Dashboard from './pages/Dashboard';
-import QuizList from './pages/quiz/QuizList';
-import QuizForm from './pages/quiz/QuizForm';
-import QuizDetail from './pages/quiz/QuizDetail';
-import TakeQuiz from './pages/quiz/TakeQuiz';
-import QuizResults from './pages/quiz/QuizResults';
+// Quiz Components
+import QuizList from './components/quiz/QuizList';
+import QuizCreate from './components/quiz/QuizCreate';
+import QuizEdit from './components/quiz/QuizEdit';
+import QuizTake from './components/quiz/QuizTake';
+import QuizResults from './components/quiz/QuizResults';
 
-// Admin Pages
-import UserManagement from './pages/admin/UserManagement';
-import StudentQuizzes from './pages/student/StudentQuizzes';
+// Analytics Components
+import UserAnalytics from './components/analytics/UserAnalytics';
+import QuizAnalytics from './components/analytics/QuizAnalytics';
+
+// Admin Components
+import UserManagement from './components/admin/UserManagement';
+import Dashboard from './components/admin/Dashboard';
 
 function App() {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-  const theme = createTheme({
-    palette: {
-      mode: 'light',
-      primary: {
-        main: '#1976d2',
-      },
-      secondary: {
-        main: '#dc004e',
-      },
-    },
-  });
-
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
-        <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" />} />
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <Layout />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          
-          {/* Quiz Routes */}
-          <Route path="quizzes">
-            <Route index element={<QuizList />} />
-            <Route path="create" element={<PrivateRoute roles={['teacher', 'admin']}><QuizForm /></PrivateRoute>} />
-            <Route path=":id" element={<QuizDetail />} />
-            <Route path=":id/edit" element={<PrivateRoute roles={['teacher', 'admin']}><QuizForm /></PrivateRoute>} />
-            <Route path=":id/take" element={<PrivateRoute roles={['student']}><TakeQuiz /></PrivateRoute>} />
-            <Route path=":id/results" element={<QuizResults />} />
-          </Route>
+            {/* Protected Routes */}
+            <Route element={<Layout />}>
+              {/* Student Routes */}
+              <Route path="/" element={<PrivateRoute roles={['student', 'teacher', 'admin']}><QuizList /></PrivateRoute>} />
+              <Route path="/quiz/:id/take" element={<PrivateRoute roles={['student']}><QuizTake /></PrivateRoute>} />
+              <Route path="/quiz/:id/results" element={<PrivateRoute roles={['student']}><QuizResults /></PrivateRoute>} />
+              <Route path="/analytics/user" element={<PrivateRoute roles={['student']}><UserAnalytics /></PrivateRoute>} />
 
-          {/* Admin Routes */}
-          <Route path="admin">
-            <Route path="users" element={<PrivateRoute roles={['admin']}><UserManagement /></PrivateRoute>} />
-          </Route>
+              {/* Teacher Routes */}
+              <Route path="/quiz/create" element={<PrivateRoute roles={['teacher', 'admin']}><QuizCreate /></PrivateRoute>} />
+              <Route path="/quiz/:id/edit" element={<PrivateRoute roles={['teacher', 'admin']}><QuizEdit /></PrivateRoute>} />
+              <Route path="/analytics/quiz/:id" element={<PrivateRoute roles={['teacher', 'admin']}><QuizAnalytics /></PrivateRoute>} />
 
-          {/* Student Routes */}
-          <Route path="student">
-            <Route path="quizzes" element={<PrivateRoute roles={['student']}><StudentQuizzes /></PrivateRoute>} />
-          </Route>
-        </Route>
-      </Routes>
-    </ThemeProvider>
+              {/* Admin Routes */}
+              <Route path="/admin" element={<PrivateRoute roles={['admin']}><Dashboard /></PrivateRoute>} />
+              <Route path="/admin/users" element={<PrivateRoute roles={['admin']}><UserManagement /></PrivateRoute>} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </Provider>
   );
 }
 

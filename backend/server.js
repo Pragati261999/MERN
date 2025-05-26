@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const dotenv = require("dotenv");
 const userRoutes = require('./routes/userRoutes');
 const quizRoutes = require('./routes/quizRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -32,6 +33,7 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
